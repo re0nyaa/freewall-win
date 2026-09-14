@@ -1,0 +1,6 @@
+/.vs
+/freewall-win/bin/Release
+/freewall-win/obj
+/freewall-win/publish
+/freewall-win/bin/Debug
+/freewall-win/installer_output

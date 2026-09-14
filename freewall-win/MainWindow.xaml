@@ -1,0 +1,360 @@
+<ui:FluentWindow x:Class="freewall_win.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        xmlns:local="clr-namespace:freewall_win"
+        mc:Ignorable="d"
+        Title="freewall" Height="620" Width="470"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanMinimize"
+        ExtendsContentIntoTitleBar="True"
+        WindowBackdropType="Mica"
+        WindowCornerPreference="Round"
+        Background="{StaticResource BgBrush}"
+        Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Windows 11 Fluent TitleBar (Integrated with Dark Theme) -->
+        <ui:TitleBar Grid.Row="0" Title="freewall" ShowMaximize="False" />
+
+        <!-- App Header & Segmented Tab Navigation -->
+        <Grid Grid.Row="1" Margin="20,8,20,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Brand Icon & Name -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Path Data="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"
+                      Fill="{StaticResource AccentGreenBrush}"
+                      Width="20" Height="20" Stretch="Uniform" Margin="0,0,8,0"/>
+                <TextBlock Text="freewall" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Segmented Tab Navigation -->
+            <Border Grid.Column="2" Background="#1E2025" CornerRadius="10" Padding="3" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                <StackPanel Orientation="Horizontal">
+                    <RadioButton x:Name="TabProtection" Style="{StaticResource NavTabButtonStyle}" Content="보호" IsChecked="True" Checked="Tab_Checked"/>
+                    <RadioButton x:Name="TabSettings" Style="{StaticResource NavTabButtonStyle}" Content="설정" Checked="Tab_Checked"/>
+                    <RadioButton x:Name="TabLogs" Style="{StaticResource NavTabButtonStyle}" Content="로그" Checked="Tab_Checked"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- Main Body Content (Tabs) -->
+        <Grid Grid.Row="2">
+
+            <!-- TAB 1: Dashboard (Protection) -->
+            <Grid x:Name="ViewProtection" Visibility="Visible">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Center Protection Big Button -->
+                <Button Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                        Click="BtnPowerToggle_Click" Cursor="Hand" Width="170" Height="170">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Grid>
+                                <!-- Outer Glow / Pulse Ring -->
+                                <Ellipse x:Name="PulseRing" Width="170" Height="170" 
+                                         Fill="{StaticResource AccentGreenBgBrush}" 
+                                         Stroke="{StaticResource AccentGreenLightBrush}" 
+                                         StrokeThickness="1.5" Opacity="0.4"/>
+
+                                <!-- Center Shield Circle -->
+                                <Ellipse x:Name="CenterCircle" Width="120" Height="120" 
+                                         Fill="{StaticResource AccentGreenBrush}">
+                                    <Ellipse.Effect>
+                                        <DropShadowEffect BlurRadius="25" ShadowDepth="0" Opacity="0.4" Color="#10B981"/>
+                                    </Ellipse.Effect>
+                                </Ellipse>
+
+                                <!-- Power / Shield Icon SVG -->
+                                <Path x:Name="IconPath" 
+                                      Data="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"
+                                      Fill="White" Width="44" Height="44" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <DataTrigger Binding="{Binding IsRunning}" Value="False">
+                                    <Setter TargetName="PulseRing" Property="Fill" Value="#181A1F"/>
+                                    <Setter TargetName="PulseRing" Property="Stroke" Value="#2E333D"/>
+                                    <Setter TargetName="PulseRing" Property="Opacity" Value="0.5"/>
+                                    <Setter TargetName="CenterCircle" Property="Fill" Value="#262930"/>
+                                    <Setter TargetName="IconPath" Property="Fill" Value="#6B7280"/>
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <!-- Status Text & Info Badges -->
+                <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,20,0,0">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,12">
+                        <Ellipse x:Name="StatusDot" Width="9" Height="9" Fill="{StaticResource AccentGreenBrush}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="TxtStatus" Text="보호 활성화됨" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- Info Badges Pill -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Border Background="#1F2228" CornerRadius="12" Padding="14,6" Margin="0,0,8,0" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                            <TextBlock x:Name="BadgePreset" Text="Chunk 1B (Disorder)" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        </Border>
+                        <Border Background="#1F2228" CornerRadius="12" Padding="14,6" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                            <TextBlock Text="TLS SNI 파편화" FontSize="11.5" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Bottom Auto-protect Toggle Card -->
+                <Border Grid.Row="4" Margin="24,0,24,20" Background="{StaticResource CardBrush}" 
+                        CornerRadius="12" Padding="18,14" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="로그인 시 자동 보호 시작" FontSize="13" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <TextBlock Text="PC 부팅 시 보호를 자동으로 시작합니다" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <CheckBox Grid.Column="1" x:Name="ChkAutoProtect" Style="{StaticResource ModernToggleSwitch}" 
+                                  Click="ChkAutoProtect_Click" VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- TAB 2: Settings -->
+            <ScrollViewer x:Name="ViewSettings" Visibility="Collapsed" VerticalScrollBarVisibility="Auto" Padding="20,10,20,20">
+                <StackPanel>
+                    <!-- Running Warning Notice -->
+                    <Border x:Name="PanelRunningNotice" Background="#261A10" BorderBrush="#F59E0B" BorderThickness="1" 
+                            CornerRadius="8" Padding="12,10" Margin="0,0,0,14" Visibility="Collapsed">
+                        <TextBlock Text="⚠️ 보호가 실행 중일 때는 설정을 변경할 수 없습니다." Foreground="#FCD34D" FontSize="12" FontWeight="SemiBold"/>
+                    </Border>
+
+                    <!-- Config Container with IsEnabled binding to !IsRunning -->
+                    <StackPanel x:Name="PanelSettingsContainer">
+                        <!-- Quick Presets -->
+                        <TextBlock Text="프리셋 퀵 선택" FontSize="12" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" Margin="4,0,0,8"/>
+                        <Border Background="{StaticResource CardBrush}" CornerRadius="10" Padding="16,12" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="원작 freewall 및 최적화 설정을 클릭 한 번으로 전환합니다." FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,10"/>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Chunk 1B (Disorder)" Style="{StaticResource ActionButtonStyle}" 
+                                            Background="#15362B" Foreground="#34D399" BorderBrush="#10B981"
+                                            Padding="14,8" FontWeight="SemiBold" Margin="0,0,8,0" Click="BtnPresetChunk1B_Click"/>
+                                    <Button Content="표준 Mode 1" Style="{StaticResource ActionButtonStyle}" 
+                                            Padding="14,8" Margin="0,0,8,0" Click="BtnPresetMode1_Click"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Section: Startup Settings -->
+                        <TextBlock Text="자동 시작" FontSize="12" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" Margin="4,0,0,8"/>
+                        <Border Background="{StaticResource CardBrush}" CornerRadius="10" Padding="16,12" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid Margin="0,4,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="로그인 시 앱 자동 실행" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center" FontSize="13"/>
+                                    <CheckBox Grid.Column="1" x:Name="ChkLaunchAtStartup" Style="{StaticResource ModernToggleSwitch}" Click="Setting_Changed"/>
+                                </Grid>
+                                <Rectangle Height="1" Fill="{StaticResource CardBorderBrush}" Margin="0,4"/>
+                                <Grid Margin="0,8,0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="앱 실행 시 보호 자동 시작" Foreground="{StaticResource TextPrimaryBrush}" VerticalAlignment="Center" FontSize="13"/>
+                                    <CheckBox Grid.Column="1" x:Name="ChkAutoStartProtection" Style="{StaticResource ModernToggleSwitch}" Click="Setting_Changed"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Section: DNS Settings -->
+                        <TextBlock Text="DNS 설정" FontSize="12" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" Margin="4,0,0,8"/>
+                        <Border Background="{StaticResource CardBrush}" CornerRadius="10" Padding="16,14" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="DNS 리다이렉션 사용" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13" FontWeight="SemiBold"/>
+                                        <TextBlock Text="차단된 DNS 오염을 방지하기 위해 사용자 지정 DNS로 우회합니다." FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                    <CheckBox Grid.Column="1" x:Name="ChkUseCustomDns" Style="{StaticResource ModernToggleSwitch}" Click="ChkUseCustomDns_Click" VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <StackPanel x:Name="PanelDnsInputs" Visibility="Collapsed" Margin="0,8,0,0">
+                                    <Rectangle Height="1" Fill="{StaticResource CardBorderBrush}" Margin="0,0,0,12"/>
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Margin="0,0,10,0">
+                                            <TextBlock Text="DNS IP 주소" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                            <TextBox x:Name="TxtDnsIp" Text="9.9.9.9" Background="#121316" Foreground="{StaticResource TextPrimaryBrush}" 
+                                                     BorderBrush="{StaticResource CardBorderBrush}" Padding="8,6" TextChanged="TxtDns_TextChanged"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Text="포트 (Port)" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                            <TextBox x:Name="TxtDnsPort" Text="9953" Background="#121316" Foreground="{StaticResource TextPrimaryBrush}" 
+                                                     BorderBrush="{StaticResource CardBorderBrush}" Padding="8,6" TextChanged="TxtDns_TextChanged"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <TextBlock Text="※ 권장 DNS: Quad9 (9.9.9.9:9953), Cloudflare (1.1.1.1:53)" FontSize="10.5" Foreground="#9CA3AF"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Section: Presets with Detailed Descriptions -->
+                        <TextBlock Text="우회 모드 프리셋" FontSize="12" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}" Margin="4,0,0,8"/>
+                        <Border Background="{StaticResource CardBrush}" CornerRadius="10" Padding="16,14" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1" Margin="0,0,0,16">
+                            <StackPanel>
+                                <!-- Chunk 1B (Disorder) Preset -->
+                                <RadioButton x:Name="RadioModeChunk1B" GroupName="PresetGroup" Margin="0,4,0,6" IsChecked="True" Checked="RadioMode_Checked">
+                                    <StackPanel Margin="6,0,0,0">
+                                        <TextBlock Text="Chunk 1B (Disorder / 추천)" FontWeight="SemiBold" Foreground="{StaticResource AccentGreenLightBrush}" FontSize="13"/>
+                                        <TextBlock Text="HTTPS 청크 1바이트 분할 + 순서 뒤섞기로 SNI 완벽 우회 (-e 1 --reverse-frag)" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </RadioButton>
+                                <Rectangle Height="1" Fill="{StaticResource CardBorderBrush}" Margin="0,4"/>
+
+                                <!-- Mode 1 -->
+                                <RadioButton x:Name="RadioMode1" GroupName="PresetGroup" Margin="0,6" Checked="RadioMode_Checked">
+                                    <StackPanel Margin="6,0,0,0">
+                                        <TextBlock Text="Mode 1 (표준 권장)" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"/>
+                                        <TextBlock Text="가장 높은 호환성. 대부분의 사이트와 한국 ISP 환경에 적합 (-p -r -s -f 2 -k 2 -n -e 2)" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </RadioButton>
+                                <Rectangle Height="1" Fill="{StaticResource CardBorderBrush}" Margin="0,4"/>
+
+                                <!-- Mode 2 -->
+                                <RadioButton x:Name="RadioMode2" GroupName="PresetGroup" Margin="0,6" Checked="RadioMode_Checked">
+                                    <StackPanel Margin="6,0,0,0">
+                                        <TextBlock Text="Mode 2 (HTTPS 고속 분할)" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"/>
+                                        <TextBlock Text="Mode 1과 유사하나 HTTPS 패킷 청크를 키워 속도를 개선한 모드" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </RadioButton>
+                                <Rectangle Height="1" Fill="{StaticResource CardBorderBrush}" Margin="0,4"/>
+
+                                <!-- Mode 3 -->
+                                <RadioButton x:Name="RadioMode3" GroupName="PresetGroup" Margin="0,6" Checked="RadioMode_Checked">
+                                    <StackPanel Margin="6,0,0,0">
+                                        <TextBlock Text="Mode 3 (HTTP/HTTPS 균형)" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"/>
+                                        <TextBlock Text="HTTP 및 HTTPS 연결 속도와 우회 성능을 균형 있게 최적화" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </RadioButton>
+                                <Rectangle Height="1" Fill="{StaticResource CardBorderBrush}" Margin="0,4"/>
+
+                                <!-- Mode 4 -->
+                                <RadioButton x:Name="RadioMode4" GroupName="PresetGroup" Margin="0,6" Checked="RadioMode_Checked">
+                                    <StackPanel Margin="6,0,0,0">
+                                        <TextBlock Text="Mode 4 (최대 속도)" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"/>
+                                        <TextBlock Text="패킷 조작을 최소화하여 지연 시간을 줄이고 최고의 처리 속도 제공" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </RadioButton>
+                                <Rectangle Height="1" Fill="{StaticResource CardBorderBrush}" Margin="0,4"/>
+
+                                <!-- Mode 5 -->
+                                <RadioButton x:Name="RadioMode5" GroupName="PresetGroup" Margin="0,6" Checked="RadioMode_Checked">
+                                    <StackPanel Margin="6,0,0,0">
+                                        <TextBlock Text="Mode 5 (Auto-TTL 역방향 패킷 분할)" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"/>
+                                        <TextBlock Text="Auto-TTL 및 역방향 분할을 적용하여 강력한 방화벽 차단을 우회" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </RadioButton>
+                                <Rectangle Height="1" Fill="{StaticResource CardBorderBrush}" Margin="0,4"/>
+
+                                <!-- Mode Custom -->
+                                <RadioButton x:Name="RadioModeCustom" GroupName="PresetGroup" Margin="0,6,0,0" Checked="RadioMode_Checked">
+                                    <StackPanel Margin="6,0,0,0">
+                                        <TextBlock Text="사용자 정의 인자 (Custom)" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" FontSize="13"/>
+                                        <TextBlock Text="직접 커스텀 커맨드라인 옵션을 입력하여 실행" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </RadioButton>
+
+                                <TextBox x:Name="TxtCustomArgs" Background="#121316" Foreground="{StaticResource TextPrimaryBrush}" 
+                                         BorderBrush="{StaticResource CardBorderBrush}" Padding="8,6" Margin="24,8,0,0"
+                                         Visibility="Collapsed" TextChanged="TxtCustomArgs_TextChanged"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- TAB 3: Logs -->
+            <Grid x:Name="ViewLogs" Visibility="Collapsed" Margin="16">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Controls Bar -->
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Name="TxtLogCount" Text="0개 라인" Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" VerticalAlignment="Center"/>
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <CheckBox x:Name="ChkAutoScroll" Content="자동 스크롤" Foreground="{StaticResource TextSecondaryBrush}" 
+                                  IsChecked="True" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                        <Button Content="복사" Style="{StaticResource ActionButtonStyle}" Click="BtnCopyLogs_Click" Margin="0,0,6,0"/>
+                        <Button Content="비우기" Style="{StaticResource ActionButtonStyle}" Click="BtnClearLogs_Click"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Terminal-like Console Log Viewer -->
+                <Border Grid.Row="1" Background="#0C0D0F" CornerRadius="8" BorderBrush="{StaticResource CardBorderBrush}" BorderThickness="1">
+                    <ScrollViewer x:Name="LogScrollViewer" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="12">
+                        <ItemsControl ItemsSource="{Binding Logs}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" Margin="0,2">
+                                        <TextBlock Text="{Binding FormattedTime}" FontFamily="Consolas, Cascadia Code, Courier New" FontSize="11" Foreground="#4B5563" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding Text}" FontFamily="Consolas, Cascadia Code, Courier New" FontSize="11">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="#E5E7EB"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsError}" Value="True">
+                                                            <Setter Property="Foreground" Value="#EF4444"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Border>
+            </Grid>
+
+        </Grid>
+    </Grid>
+</ui:FluentWindow>
